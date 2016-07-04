@@ -20,25 +20,29 @@ public class BaseModel {
         Scanner buffer;
 
         try { //Read key data
-            buffer = new Scanner(Paths.get(fileKey));
-            String line = buffer.nextLine();
-            String cache = ""; int i;
-            for (i = 0; i < line.length(); i++) {
-                if ('0' <= line.charAt(i) && line.charAt(i) <= '9')
-                    cache += line.charAt(i);
-                else break;
-            }
-            a = Integer.parseInt(cache);
+            buffer = new Scanner(Paths.get(fileKey)); int i;
+            String line = buffer.nextLine(); String cache = "";
+            if (is_char(line.charAt(0))) {
+                a = 1; b = 0;
+            } else {
+                for (i = 0; i < line.length(); i++) {
+                    if ('0' <= line.charAt(i) && line.charAt(i) <= '9')
+                        cache += line.charAt(i);
+                    else break;
+                }
+                a = Integer.parseInt(cache);
 
-            cache = ""; i++;
-            for (;i < line.length(); i++) {
-                if ('0' <= line.charAt(i) && line.charAt(i) <= '9')
-                    cache += line.charAt(i);
-                else break;
+                cache = "";
+                i++;
+                for (; i < line.length(); i++) {
+                    if ('0' <= line.charAt(i) && line.charAt(i) <= '9')
+                        cache += line.charAt(i);
+                    else break;
+                }
+                b = Integer.parseInt(cache);
+                line = buffer.nextLine(); //Skip through alphabet line
             }
-            b = Integer.parseInt(cache);
 
-            line = buffer.nextLine(); //Skip through alphabet line
             line = buffer.nextLine();
             cache = ""; int index = 0;
             for (i = 0; i < line.length(); i++) {
@@ -59,12 +63,11 @@ public class BaseModel {
             showErrorDialog(Alert.AlertType.ERROR, "Key File Not Found!", errorMess);
         }
 
-        if (a % 2 == 0 || a % 13 == 0) {
+        if ((a % 2 == 0 || a % 13 == 0) && (b < 0 || b > 25)) {
             op_sus = false;
             String errorMess = "This Key file is not valid for encrypting/decrypting! Please check again!";
-            errorMess += "\nPath: " + fileKey + "\nKey A value = " + a;
+            errorMess += "\nPath: " + fileKey + "\nKey A value = " + a + "\nKey B value = " + b;
             showErrorDialog(Alert.AlertType.ERROR, "Key File Error!", errorMess);
-
         } else try {
             String savePath = fileTxt.substring(0, fileTxt.length() - 4);
             savePath += (opmode == OPMODE.ENCRYPT)? "_encrypted.txt" : "_decrypted.txt";

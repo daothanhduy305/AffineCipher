@@ -3,7 +3,6 @@ package affine.models;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static affine.models.BaseModel.calcAI;
 import static affine.models.BaseModel.is_char;
 
 /**

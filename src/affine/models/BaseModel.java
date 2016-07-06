@@ -55,11 +55,22 @@ public class BaseModel {
                     cache += line.charAt(i);
                 else {
                     indexes[index] = Integer.parseInt(cache);
+                    if (indexes[index] < 0 || indexes[index] > 25) {
+                        op_sus = false;
+                        showErrorDialog(Alert.AlertType.ERROR, "Key File Error!",
+                                "Indexes are not valid! Please check again!");
+                        break;
+                    }
                     index++;
                     cache = "";
                 }
             }
             indexes[index] = Integer.parseInt(cache);
+            if (indexes[index] < 0 || indexes[index] > 25) {
+                op_sus = false;
+                showErrorDialog(Alert.AlertType.ERROR, "Key File Error!",
+                        "Indexes are not valid! Please check again!");
+            }
         } catch (Exception e) {
             op_sus = false;
             String errorMess = (fileKey.length() <= 0)?
@@ -68,31 +79,33 @@ public class BaseModel {
             showErrorDialog(Alert.AlertType.ERROR, "Key File Not Found!", errorMess);
         }
 
-        String savePath;
+        if (op_sus) {
+            String savePath;
 
-        if ((a % 2 == 0 || a % 13 == 0) && (b < 0 || b > 25)) {
-            op_sus = false;
-            String errorMess = "This Key file is not valid for encrypting/decrypting! Please check again!";
-            errorMess += "\nPath: " + fileKey + "\nKey A value = " + a + "\nKey B value = " + b;
-            showErrorDialog(Alert.AlertType.ERROR, "Key File Error!", errorMess);
-        } else try {
-            savePath = fileTxt.substring(0, fileTxt.length() - 4);
-            savePath += (opmode == OPMODE.ENCRYPT)? "_encrypted.txt" : "_decrypted.txt";
-            buffer = new Scanner(Paths.get(fileTxt));
-            ArrayList<String> texts;
-            if (opmode == OPMODE.ENCRYPT)
-                texts = encrypt(a, b, indexes, buffer);
-            else
-                texts = decrypt(a, b, indexes, buffer);
-            if (texts != null)
-                Files.write(Paths.get(savePath), texts, Charset.forName("UTF-8"));
-            else op_sus = false;
-        } catch (Exception e) {
-            op_sus = false;
-            String errorMess = (fileTxt.length() <= 0)?
-                    "Missing path for Text file!" :
-                    "The Text file path is invalid:\n" + fileTxt;
-            showErrorDialog(Alert.AlertType.ERROR, "Text File Not Found!", errorMess);
+            if ((a % 2 == 0 || a % 13 == 0) && (b < 0 || b > 25) && (a < 0 || a > 25)) {
+                op_sus = false;
+                String errorMess = "This Key file is not valid for encrypting/decrypting! Please check again!";
+                errorMess += "\nPath: " + fileKey + "\nKey A value = " + a + "\nKey B value = " + b;
+                showErrorDialog(Alert.AlertType.ERROR, "Key File Error!", errorMess);
+            } else try {
+                savePath = fileTxt.substring(0, fileTxt.length() - 4);
+                savePath += (opmode == OPMODE.ENCRYPT) ? "_encrypted.txt" : "_decrypted.txt";
+                buffer = new Scanner(Paths.get(fileTxt));
+                ArrayList<String> texts;
+                if (opmode == OPMODE.ENCRYPT)
+                    texts = encrypt(a, b, indexes, buffer);
+                else
+                    texts = decrypt(a, b, indexes, buffer);
+                if (texts != null)
+                    Files.write(Paths.get(savePath), texts, Charset.forName("UTF-8"));
+                else op_sus = false;
+            } catch (Exception e) {
+                op_sus = false;
+                String errorMess = (fileTxt.length() <= 0) ?
+                        "Missing path for Text file!" :
+                        "The Text file path is invalid:\n" + fileTxt;
+                showErrorDialog(Alert.AlertType.ERROR, "Text File Not Found!", errorMess);
+            }
         }
 
         if (op_sus) {

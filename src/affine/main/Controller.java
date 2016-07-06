@@ -22,7 +22,7 @@ public class Controller {
         fileChooser.setTitle("Open Key File");
         fileChooser.getExtensionFilters().remove(0, fileChooser.getExtensionFilters().size());
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Affine Cipher Key", "*.affinekey"));
+                new FileChooser.ExtensionFilter("Affine Cipher Key", "*.txt"));
         keyFile = fileChooser.showOpenDialog(mainStage);
         if (keyFile != null) {
             pathKey.setText(keyFile.getPath());
